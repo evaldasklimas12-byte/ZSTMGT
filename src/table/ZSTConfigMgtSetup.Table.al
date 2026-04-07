@@ -1,6 +1,6 @@
 table 72400 "ZST Setup Management Setup"
 {
-    Caption = 'Setup Management Setup';
+    Caption = 'ZST Management Setup';
     DataClassification = CustomerContent;
 
     fields
