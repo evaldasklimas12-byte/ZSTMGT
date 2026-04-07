@@ -13,19 +13,50 @@ if ([string]::IsNullOrWhiteSpace($SetupContextJson)) {
 
 $ctx = $SetupContextJson | ConvertFrom-Json
 
-$missing = @()
-if ([string]::IsNullOrWhiteSpace($ctx.soapBaseUrl)) { $missing += 'soapBaseUrl' }
-if ([string]::IsNullOrWhiteSpace($ctx.username))    { $missing += 'username' }
-if ([string]::IsNullOrWhiteSpace($ctx.password))    { $missing += 'password' }
-if ($missing.Count -gt 0) {
-    throw "ZST_SETUP_CONTEXT is missing required fields: $($missing -join ', '). Expected: { soapBaseUrl, username, password, company? }"
+if ([string]::IsNullOrWhiteSpace($ctx.soapBaseUrl)) {
+    throw "ZST_SETUP_CONTEXT is missing required field: soapBaseUrl"
 }
 
 $baseUrl = $ctx.soapBaseUrl.TrimEnd('/')
-$username = $ctx.username
-$password = $ctx.password
-$token = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${username}:${password}"))
-$authHeader = "Basic $token"
+
+# --- Determine auth mode and build auth header ---
+$isSaaS = -not [string]::IsNullOrWhiteSpace($ctx.clientId)
+
+if ($isSaaS) {
+    # SaaS: OAuth client credentials flow
+    $missing = @()
+    if ([string]::IsNullOrWhiteSpace($ctx.tenantId))     { $missing += 'tenantId' }
+    if ([string]::IsNullOrWhiteSpace($ctx.clientId))     { $missing += 'clientId' }
+    if ([string]::IsNullOrWhiteSpace($ctx.clientSecret)) { $missing += 'clientSecret' }
+    if ($missing.Count -gt 0) {
+        throw "ZST_SETUP_CONTEXT SaaS mode is missing fields: $($missing -join ', '). Expected: { soapBaseUrl, tenantId, clientId, clientSecret, company? }"
+    }
+
+    Write-Host "SaaS mode - fetching OAuth token for tenant $($ctx.tenantId) ..."
+    $tokenResponse = Invoke-RestMethod `
+        -Uri "https://login.microsoftonline.com/$($ctx.tenantId)/oauth2/v2.0/token" `
+        -Method POST `
+        -Body @{
+            grant_type    = "client_credentials"
+            client_id     = $ctx.clientId
+            client_secret = $ctx.clientSecret
+            scope         = "https://api.businesscentral.dynamics.com/.default"
+        }
+    $authHeader = "Bearer $($tokenResponse.access_token)"
+    Write-Host "OAuth token acquired."
+} else {
+    # On-prem: Basic auth
+    $missing = @()
+    if ([string]::IsNullOrWhiteSpace($ctx.username)) { $missing += 'username' }
+    if ([string]::IsNullOrWhiteSpace($ctx.password)) { $missing += 'password' }
+    if ($missing.Count -gt 0) {
+        throw "ZST_SETUP_CONTEXT on-prem mode is missing fields: $($missing -join ', '). Expected: { soapBaseUrl, username, password, company? }"
+    }
+
+    $token = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($ctx.username):$($ctx.password)"))
+    $authHeader = "Basic $token"
+    Write-Host "On-prem mode - using Basic auth."
+}
 
 # --- Resolve company ---
 $company = $ctx.company
@@ -35,8 +66,7 @@ if ([string]::IsNullOrWhiteSpace($company)) {
         $companiesResponse = Invoke-RestMethod `
             -Uri "$baseUrl/api/v2.0/companies" `
             -Method GET `
-            -Headers @{ Authorization = $authHeader } `
-            -UseBasicParsing
+            -Headers @{ Authorization = $authHeader }
         $companies = $companiesResponse.value
         if ($companies.Count -eq 1) {
             $company = $companies[0].name

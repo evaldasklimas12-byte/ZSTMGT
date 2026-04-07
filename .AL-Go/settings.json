@@ -4,6 +4,6 @@
   "country": "nl",
   "appFolders": ["."],
   "testFolders": [],
-  "bcptTestFolders": []
-
+  "bcptTestFolders": [],
+  "gitHubRunner": "windows-latest"
 }

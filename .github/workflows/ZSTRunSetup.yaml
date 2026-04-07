@@ -55,7 +55,7 @@ jobs:
   RunSetup:
     needs: [Prepare]
     if: needs.Prepare.outputs.shouldRun == 'true'
-    runs-on: [self-hosted]
+    runs-on: windows-latest
     name: Run ZST Setup on ${{ needs.Prepare.outputs.environmentName }}
     environment:
       name: ${{ needs.Prepare.outputs.environmentName }}
