@@ -1,0 +1,38 @@
+{
+    "id": "6c60b69f-24af-4955-9186-703df5a6f551",
+    "name": "Zest Setup Management",
+    "publisher": "Zest",
+    "version": "26.0.0.1",
+    "brief": "",
+    "description": "",
+    "privacyStatement": "",
+    "EULA": "",
+    "help": "https://www.zest-erp.com/support",
+    "url": "https://www.zest-erp.com",
+    "logo": "",
+    "features": [
+        "TranslationFile"
+      ],
+    "screenshots": [],
+    "platform": "26.0.0.0",
+    "application": "26.0.0.0",
+    "idRanges": [
+      {
+        "from": 72400,
+        "to": 72499
+      }
+    ],
+      "dependencies": [
+    {
+      "id": "c9ce86fe-cb70-4b79-be03-d21856b1a4ca",
+      "publisher": "Microsoft",
+      "name": "External File Storage - Azure Blob Service Connector",
+      "version": "26.5.38752.46025"
+    }],
+    "resourceExposurePolicy": {
+        "allowDebugging": true,
+        "allowDownloadingSource": true,
+        "includeSourceInSymbolFile": true
+    },
+    "runtime": "15.0"
+}
