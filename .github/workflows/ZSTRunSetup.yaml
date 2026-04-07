@@ -1,0 +1,80 @@
+name: 'ZST Run Setup'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environmentName:
+        description: GitHub environment name to run setup against
+        required: true
+  workflow_run:
+    workflows: [' Publish To Environment']
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  Prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      environmentName: ${{ steps.resolve.outputs.environmentName }}
+      shouldRun: ${{ steps.resolve.outputs.shouldRun }}
+    steps:
+      - name: Resolve environment name
+        id: resolve
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.eventName === 'workflow_dispatch') {
+              core.setOutput('environmentName', context.payload.inputs.environmentName);
+              core.setOutput('shouldRun', 'true');
+              return;
+            }
+            // workflow_run: skip if the publish workflow failed
+            if (context.payload.workflow_run.conclusion !== 'success') {
+              core.info('Publish workflow did not succeed, skipping setup.');
+              core.setOutput('shouldRun', 'false');
+              return;
+            }
+            // Read the environmentName input from the completed workflow run
+            const { data: run } = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
+            const envName = (run.inputs && run.inputs.environmentName) ? run.inputs.environmentName : '';
+            if (!envName || envName.includes('*')) {
+              core.warning(`Environment name '${envName}' is empty or a wildcard — skipping automatic setup. Run 'ZST Run Setup' manually.`);
+              core.setOutput('shouldRun', 'false');
+              return;
+            }
+            core.setOutput('environmentName', envName);
+            core.setOutput('shouldRun', 'true');
+
+  RunSetup:
+    needs: [Prepare]
+    if: needs.Prepare.outputs.shouldRun == 'true'
+    runs-on: windows-latest
+    name: Run ZST Setup on ${{ needs.Prepare.outputs.environmentName }}
+    environment:
+      name: ${{ needs.Prepare.outputs.environmentName }}
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Initialize BC Setup via SOAP
+        env:
+          ZST_SOAP_BASE_URL: ${{ secrets.ZST_SOAP_BASE_URL }}
+          ZST_SOAP_COMPANY: ${{ secrets.ZST_SOAP_COMPANY }}
+          ZST_SOAP_USERNAME: ${{ secrets.ZST_SOAP_USERNAME }}
+          ZST_SOAP_PASSWORD: ${{ secrets.ZST_SOAP_PASSWORD }}
+        run: |
+          .AL-Go/InvokeZSTSetup.ps1 `
+            -SoapBaseUrl $env:ZST_SOAP_BASE_URL `
+            -Company $env:ZST_SOAP_COMPANY `
+            -Username $env:ZST_SOAP_USERNAME `
+            -Password $env:ZST_SOAP_PASSWORD

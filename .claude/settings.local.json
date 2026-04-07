@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/evald/Documents/ZSTSetupTest/**)"
+      "Read(//c/Users/evald/Documents/ZSTMGT/**)",
+      "Read(//C/Users/evald/Documents/baseapp_27.4_NL/**)"
     ]
   }
 }
