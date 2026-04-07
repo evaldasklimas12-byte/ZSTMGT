@@ -5,5 +5,5 @@
   "appFolders": ["."],
   "testFolders": [],
   "bcptTestFolders": [],
-  "gitHubRunner": "windows-latest"
+  "GitHubRunner": "windows-latest"
 }
