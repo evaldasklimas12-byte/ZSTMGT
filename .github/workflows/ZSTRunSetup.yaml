@@ -45,7 +45,7 @@ jobs:
             });
             const envName = (run.inputs && run.inputs.environmentName) ? run.inputs.environmentName : '';
             if (!envName || envName.includes('*')) {
-              core.warning(`Environment name '${envName}' is empty or a wildcard — skipping automatic setup. Run 'ZST Run Setup' manually.`);
+              core.warning(`Environment name '${envName}' is empty or a wildcard - skipping automatic setup. Run 'ZST Run Setup' manually.`);
               core.setOutput('shouldRun', 'false');
               return;
             }
@@ -67,14 +67,13 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Initialize BC Setup via SOAP
+        if: env.ZST_SETUP_CONTEXT != ''
         env:
-          ZST_SOAP_BASE_URL: ${{ secrets.ZST_SOAP_BASE_URL }}
-          ZST_SOAP_COMPANY: ${{ secrets.ZST_SOAP_COMPANY }}
-          ZST_SOAP_USERNAME: ${{ secrets.ZST_SOAP_USERNAME }}
-          ZST_SOAP_PASSWORD: ${{ secrets.ZST_SOAP_PASSWORD }}
-        run: |
-          .AL-Go/InvokeZSTSetup.ps1 `
-            -SoapBaseUrl $env:ZST_SOAP_BASE_URL `
-            -Company $env:ZST_SOAP_COMPANY `
-            -Username $env:ZST_SOAP_USERNAME `
-            -Password $env:ZST_SOAP_PASSWORD
+          ZST_SETUP_CONTEXT: ${{ secrets.ZST_SETUP_CONTEXT }}
+        run: .AL-Go/InvokeZSTSetup.ps1 -SetupContextJson $env:ZST_SETUP_CONTEXT
+
+      - name: Skip - ZST_SETUP_CONTEXT not configured
+        if: env.ZST_SETUP_CONTEXT == ''
+        env:
+          ZST_SETUP_CONTEXT: ${{ secrets.ZST_SETUP_CONTEXT }}
+        run: Write-Warning "ZST_SETUP_CONTEXT secret is not set for this environment. Skipping setup."
