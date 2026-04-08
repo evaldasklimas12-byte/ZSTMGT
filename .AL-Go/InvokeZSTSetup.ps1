@@ -6,7 +6,6 @@ param(
 $errorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-# --- Parse and validate context ---
 if ([string]::IsNullOrWhiteSpace($SetupContextJson)) {
     throw "ZST_SETUP_CONTEXT secret is empty. Add it to the GitHub Environment secrets."
 }
@@ -19,11 +18,9 @@ if ([string]::IsNullOrWhiteSpace($ctx.soapBaseUrl)) {
 
 $baseUrl = $ctx.soapBaseUrl.TrimEnd('/')
 
-# --- Determine auth mode and build auth header ---
 $isSaaS = -not [string]::IsNullOrWhiteSpace($ctx.clientId)
 
 if ($isSaaS) {
-    # SaaS: OAuth client credentials flow
     $missing = @()
     if ([string]::IsNullOrWhiteSpace($ctx.tenantId))     { $missing += 'tenantId' }
     if ([string]::IsNullOrWhiteSpace($ctx.clientId))     { $missing += 'clientId' }
@@ -45,7 +42,6 @@ if ($isSaaS) {
     $authHeader = "Bearer $($tokenResponse.access_token)"
     Write-Host "OAuth token acquired."
 } else {
-    # On-prem: Basic auth
     $missing = @()
     if ([string]::IsNullOrWhiteSpace($ctx.username)) { $missing += 'username' }
     if ([string]::IsNullOrWhiteSpace($ctx.password)) { $missing += 'password' }
@@ -58,7 +54,6 @@ if ($isSaaS) {
     Write-Host "On-prem mode - using Basic auth."
 }
 
-# --- Resolve company ---
 $company = $ctx.company
 if ([string]::IsNullOrWhiteSpace($company)) {
     Write-Host "No company specified, auto-detecting from $baseUrl/api/v2.0/companies ..."
@@ -82,7 +77,6 @@ if ([string]::IsNullOrWhiteSpace($company)) {
     }
 }
 
-# --- Call SOAP endpoint ---
 $encodedCompany = [Uri]::EscapeDataString($company)
 $soapUrl = "$baseUrl/WS/$encodedCompany/Codeunit/ZSTSetupInitialization"
 

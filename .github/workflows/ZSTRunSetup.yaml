@@ -7,7 +7,7 @@ on:
         description: GitHub environment name to run setup against
         required: true
   workflow_run:
-    workflows: [' Publish To Environment']
+    workflows: [' Publish To Environment', ' CI/CD']
     types: [completed]
 
 permissions:
@@ -37,17 +37,35 @@ jobs:
               core.setOutput('shouldRun', 'false');
               return;
             }
-            // Read the environmentName input from the completed workflow run
+            // Try reading environmentName from workflow inputs (PublishToEnvironment)
             const { data: run } = await github.rest.actions.getWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
               run_id: context.payload.workflow_run.id
             });
-            const envName = (run.inputs && run.inputs.environmentName) ? run.inputs.environmentName : '';
+            let envName = (run.inputs && run.inputs.environmentName) ? run.inputs.environmentName : '';
+
+            // If no input (e.g. CI/CD triggered by push), check deployed environments from jobs
             if (!envName || envName.includes('*')) {
-              core.warning(`Environment name '${envName}' is empty or a wildcard - skipping automatic setup. Run 'ZST Run Setup' manually.`);
-              core.setOutput('shouldRun', 'false');
-              return;
+              const { data: jobs } = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.payload.workflow_run.id
+              });
+              const deployJobs = jobs.jobs.filter(j => j.conclusion === 'success' && j.environment);
+              if (deployJobs.length === 1) {
+                envName = deployJobs[0].environment;
+                core.info(`Detected deployed environment from jobs: ${envName}`);
+              } else if (deployJobs.length > 1) {
+                const names = deployJobs.map(j => j.environment).join(', ');
+                core.warning(`Multiple environments deployed: ${names}. Run 'ZST Run Setup' manually for each.`);
+                core.setOutput('shouldRun', 'false');
+                return;
+              } else {
+                core.info('No deployment environments found in completed workflow. Skipping setup.');
+                core.setOutput('shouldRun', 'false');
+                return;
+              }
             }
             core.setOutput('environmentName', envName);
             core.setOutput('shouldRun', 'true');
