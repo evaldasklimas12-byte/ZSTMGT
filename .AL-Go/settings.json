@@ -1,8 +1,10 @@
 {
-  "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v8.3/.Modules/settings.schema.json",
+  "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v9.0/.Modules/settings.schema.json",
   "type": "PTE",
   "country": "nl",
-  "appFolders": ["."],
+  "appFolders": [
+    "."
+  ],
   "testFolders": [],
   "bcptTestFolders": [],
   "GitHubRunner": "windows-latest"
