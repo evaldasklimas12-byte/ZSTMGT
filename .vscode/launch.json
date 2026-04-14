@@ -1,4 +1,47 @@
 {
   "version": "0.2.0",
-  "configurations": []
+  "configurations": [
+    {
+      "type": "al",
+      "request": "launch",
+      "name": "launch: ContainerAlpaca",
+      "server": "https://cosmo-alpaca-enterprise.westeurope.cloudapp.azure.com",
+      "serverInstance": "f07417b208d9dev",
+      "port": 443,
+      "authentication": "UserPassword",
+      "environmentType": "OnPrem",
+      "tenant": "default",
+      "startupObjectType": "Page",
+      "startupObjectId": 22,
+      "breakOnError": "All",
+      "launchBrowser": true,
+      "enableLongRunningSqlStatements": true,
+      "enableSqlInformationDebugger": true,
+      "validateServerCertificate": true
+    },
+    {
+      "type": "al",
+      "request": "attach",
+      "name": "attach: ContainerAlpaca",
+      "server": "https://cosmo-alpaca-enterprise.westeurope.cloudapp.azure.com",
+      "serverInstance": "f07417b208d9dev",
+      "port": 443,
+      "authentication": "UserPassword",
+      "environmentType": "OnPrem",
+      "tenant": "default",
+      "breakOnNext": "WebClient"
+    },
+    {
+      "type": "al",
+      "request": "snapshotInitialize",
+      "name": "snapshotInitialize: ContainerAlpaca",
+      "server": "https://cosmo-alpaca-enterprise.westeurope.cloudapp.azure.com",
+      "serverInstance": "f07417b208d9snap",
+      "port": 443,
+      "authentication": "UserPassword",
+      "environmentType": "OnPrem",
+      "tenant": "default",
+      "breakOnNext": "WebClient"
+    }
+  ]
 }
