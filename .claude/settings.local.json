@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/evald/Documents/ZSTMGT/**)",
-      "Read(//C/Users/evald/Documents/baseapp_27.4_NL/**)"
+      "Read(//C/Users/evald/Documents/baseapp_27.4_NL/**)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }
