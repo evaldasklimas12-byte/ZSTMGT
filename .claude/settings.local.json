@@ -17,7 +17,10 @@
       "Bash(python3 -c \"import sys,json; [print\\(f['name']\\) for f in json.load\\(sys.stdin\\)]\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('private','?'\\), d.get\\('description',''\\)\\)\")",
       "Read(//c/Users/evald/.claude/projects/c--Users-evald-Documents-ZSTMGT/4c89a369-3338-48e5-bcf8-84b6c46c377e/tool-results/**)",
-      "WebFetch(domain:webcache.googleusercontent.com)"
+      "WebFetch(domain:webcache.googleusercontent.com)",
+      "WebFetch(domain:marketplace.visualstudio.com)",
+      "WebFetch(domain:cosmo-docs.com)",
+      "WebFetch(domain:docs.cosmo-consult.com)"
     ]
   }
 }
