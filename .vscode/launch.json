@@ -1,47 +1,4 @@
 {
   "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "al",
-      "request": "launch",
-      "name": "launch: ZEST",
-      "server": "https://cosmo-alpaca-enterprise.westeurope.cloudapp.azure.com",
-      "serverInstance": "f02fb58c1f4edev",
-      "port": 443,
-      "authentication": "UserPassword",
-      "environmentType": "OnPrem",
-      "tenant": "default",
-      "startupObjectType": "Page",
-      "startupObjectId": 22,
-      "breakOnError": "All",
-      "launchBrowser": true,
-      "enableLongRunningSqlStatements": true,
-      "enableSqlInformationDebugger": true,
-      "validateServerCertificate": true
-    },
-    {
-      "type": "al",
-      "request": "attach",
-      "name": "attach: ZEST",
-      "server": "https://cosmo-alpaca-enterprise.westeurope.cloudapp.azure.com",
-      "serverInstance": "f02fb58c1f4edev",
-      "port": 443,
-      "authentication": "UserPassword",
-      "environmentType": "OnPrem",
-      "tenant": "default",
-      "breakOnNext": "WebClient"
-    },
-    {
-      "type": "al",
-      "request": "snapshotInitialize",
-      "name": "snapshotInitialize: ZEST",
-      "server": "https://cosmo-alpaca-enterprise.westeurope.cloudapp.azure.com",
-      "serverInstance": "f02fb58c1f4esnap",
-      "port": 443,
-      "authentication": "UserPassword",
-      "environmentType": "OnPrem",
-      "tenant": "default",
-      "breakOnNext": "WebClient"
-    }
-  ]
+  "configurations": []
 }
