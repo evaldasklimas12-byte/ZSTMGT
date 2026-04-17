@@ -12,7 +12,7 @@
     "artifacts": [
       {
         "type": "nuget",
-        "name": "Zest Setup Management"
+        "name": "Zest.ZestSetupManagement.6c60b69f-24af-4955-9186-703df5a6f551"
       },
       {
         "type": "url",
