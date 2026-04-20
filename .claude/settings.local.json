@@ -26,7 +26,8 @@
       "Bash(powershell -Command \"Test-Path 'C:\\\\Program Files\\\\Microsoft Office'\")",
       "Bash(powershell -Command \"Get-Item 'C:\\\\Users\\\\evald\\\\Desktop\\\\alpaca-setup.doc' | Select-Object Name, Length, LastWriteTime\")",
       "Bash(powershell -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\evald\\\\AppData\\\\Local\\\\Temp\\\\create-doc.ps1\")",
-      "Bash(powershell -Command \"\\(Invoke-WebRequest -Uri 'https://docs.cosmoconsult.com/en-us/cloud-service/alpaca/github/setup-artifacts.html' -UseBasicParsing\\).Content\")"
+      "Bash(powershell -Command \"\\(Invoke-WebRequest -Uri 'https://docs.cosmoconsult.com/en-us/cloud-service/alpaca/github/setup-artifacts.html' -UseBasicParsing\\).Content\")",
+      "WebFetch(domain:docs.github.com)"
     ],
     "additionalDirectories": [
       "C:\\Users\\evald\\AppData\\Local\\Temp"
