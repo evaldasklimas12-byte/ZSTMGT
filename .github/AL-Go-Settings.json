@@ -3,17 +3,10 @@
   "type": "PTE",
   "country": "nl",
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@main",
-  "trustedNuGetFeeds": [
-    {
-      "url": "https://nuget.pkg.github.com/EvaldasHiper/index.json",
-      "authTokenSecret": "NuGetReadToken"
-    }
-  ],
   "alpaca": {
     "artifacts": [
       {
-        "name": "Zest.ZestSetupManagement.6c60b69f-24af-4955-9186-703df5a6f551",
-        "version": "28.1.23"
+        "name": "Zest.ZestSetupManagement.6c60b69f-24af-4955-9186-703df5a6f551"
       },
       {
         "type": "url",
