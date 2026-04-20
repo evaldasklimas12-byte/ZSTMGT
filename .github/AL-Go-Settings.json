@@ -5,7 +5,8 @@
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@main",
   "trustedNuGetFeeds": [
     {
-      "url": "https://nuget.pkg.github.com/EvaldasHiper/index.json"
+      "url": "https://nuget.pkg.github.com/EvaldasHiper/index.json",
+      "authTokenSecret": "NuGetReadToken"
     }
   ],
   "alpaca": {
